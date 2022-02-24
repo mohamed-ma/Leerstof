@@ -4,7 +4,9 @@ import pydoop.mapreduce.pipes as pipes
 class Mapper(api.Mapper):
     def map(self, context):
         for w in context.value.split():
-            context.emit(w, 1)
+            if len(w) > 0:
+                letter = w[0].lower()
+                context.emit(letter, 1)
 class Reducer(api.Reducer):
     def reduce(self, context):
         context.emit(context.key, sum(context.values))
