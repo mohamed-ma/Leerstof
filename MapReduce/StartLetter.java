@@ -20,17 +20,21 @@ public class StartLetter {
         private Text word = new Text();
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            // split de tekst via spaties/newlines -> itereren over woorden
             StringTokenizer itr = new StringTokenizer(value.toString());
+            
             while(itr.hasMoreTokens()){
+                // next token = vraag het volgende woord op
                 String woord = itr.nextToken();
+                // zet het om naar lowercase
                 woord = woord.toLowerCase();
+                // eerste letter eruit halen
                 char firstLetter = woord.charAt(0);
                 
                 // negeer leestekens, cijfers, etc.
                 if(Character.isLetter(firstLetter)){
-                    //word.set(firstLetter);
-                    word.set(Character.toString(firstLetter));
-                    context.write(word, one);
+                    word.set(firstLetter);    
+                    context.write(word, one);    
                 }
             }
         }
@@ -50,29 +54,6 @@ public class StartLetter {
     }
 
     public static void main(String[] args) throws Exception {
-        Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "word count java");
-        // waar staat de map en reduce code
-        job.setJarByClass(StartLetter.class);
-        
-        // configure mapper
-        job.setMapperClass(TokenizerMapper.class);
-        
-        //configure reducer
-        job.setReducerClass(IntSumReducer.class);
-        
-        // configure input/output
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
-        
-        // input file
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        
-        // output file
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        
-        // start de applicatie
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+       
     }
-    
 }
