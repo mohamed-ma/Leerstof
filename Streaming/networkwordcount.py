@@ -34,13 +34,19 @@ def skipWords(time, rdd):
     droppedWordsCounter = getDroppedWordCounters(rdd.context)
     
     def func(row):
+        # the whole row looks something like this (word, 1) -> it's literally a tuple so we get the first index which is zero, and hence the word itself.
         word = row[0]
         if word in excludeList.value:
+            # the second index in the tuple is the counter, which is why we are then adding it to droppedWordsCounter
+            print("word[1]: ", row[1])
             droppedWordsCounter.add(row[1])
+            
             return False
         else:
             return True
     
+    # this rdd.filter will be called on every word/row
+    # the reason why every word is in a word is because we are applying the skipWords function on the wordCounts -> this is where we already split each word into a separate line.
     f = rdd.filter(func)
     
     print("# Genegeerde woorden:", droppedWordsCounter.value)
